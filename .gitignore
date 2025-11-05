@@ -1,0 +1,15 @@
+node_modules/
+artifacts/
+cache/
+coverage/
+dist/
+types/
+.env
+.env.local
+deployments/
+fhevmTemp/
+coverage.json
+*.log
+
+
+
