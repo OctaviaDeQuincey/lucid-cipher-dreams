@@ -19,6 +19,7 @@ contract DreamEncryption is SepoliaConfig {
     mapping(address => uint256[]) private _dreamsOf;
 
     event DreamSubmitted(uint256 indexed id, address indexed owner, uint64 createdAt);
+    event InterpretationCountIncremented(uint256 indexed id, address indexed interpreter, uint64 timestamp);
 
     /// @notice Submit a new encrypted dream
     /// @param encryptedData The client-side AES-GCM encrypted dream text (as bytes)
@@ -115,6 +116,8 @@ contract DreamEncryption is SepoliaConfig {
         // Ensure access rights are maintained
         FHE.allowThis(_dreams[id].interpretationCount);
         FHE.allow(_dreams[id].interpretationCount, msg.sender);
+
+        emit InterpretationCountIncremented(id, msg.sender, uint64(block.timestamp));
     }
 }
 
