@@ -1,0 +1,68 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradient definitions -->
+    <linearGradient id="dreamGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#06b6d4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#e879f9;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.3" />
+    </radialGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle with glow -->
+  <circle cx="256" cy="256" r="240" fill="url(#glowGradient)" opacity="0.2"/>
+  
+  <!-- Main lock body -->
+  <g filter="url(#glow)">
+    <!-- Lock shackle (dream shape) -->
+    <path d="M 256 120 Q 280 120 280 160 L 280 200 Q 280 220 260 220 L 252 220 Q 232 220 232 200 L 232 160 Q 232 120 256 120" 
+          fill="none" 
+          stroke="url(#dreamGradient)" 
+          stroke-width="16" 
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+    
+    <!-- Lock body -->
+    <rect x="200" y="220" width="112" height="140" rx="12" 
+          fill="url(#dreamGradient)" 
+          opacity="0.9"/>
+    
+    <!-- Keyhole -->
+    <circle cx="256" cy="270" r="16" fill="#0f172a"/>
+    <rect x="252" y="270" width="8" height="40" rx="4" fill="#0f172a"/>
+  </g>
+  
+  <!-- Floating dream particles/sparkles -->
+  <g opacity="0.7">
+    <circle cx="150" cy="150" r="4" fill="#e879f9" filter="url(#glow)"/>
+    <circle cx="362" cy="180" r="5" fill="#06b6d4" filter="url(#glow)"/>
+    <circle cx="140" cy="320" r="4" fill="#a855f7" filter="url(#glow)"/>
+    <circle cx="372" cy="340" r="5" fill="#22d3ee" filter="url(#glow)"/>
+    <circle cx="180" cy="380" r="4" fill="#c084fc" filter="url(#glow)"/>
+    <circle cx="340" cy="130" r="4" fill="#67e8f9" filter="url(#glow)"/>
+  </g>
+  
+  <!-- Text "D" logo mark -->
+  <text x="256" y="370" 
+        font-family="Space Grotesk, sans-serif" 
+        font-size="120" 
+        font-weight="700" 
+        fill="url(#dreamGradient)" 
+        text-anchor="middle"
+        opacity="0.9">D</text>
+</svg>
+
+
