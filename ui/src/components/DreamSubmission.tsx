@@ -108,12 +108,26 @@ export const DreamSubmission = () => {
       setDream("");
     } catch (error: any) {
       console.error("Submission error:", error);
-      const errorMessage = error.message || "Failed to submit dream";
-      toast.error("Submission failed", {
-        description: errorMessage.includes("user rejected") 
-          ? "Transaction was cancelled"
-          : errorMessage
-      });
+
+      let errorMessage = "Failed to submit dream";
+      let description = "An unexpected error occurred";
+
+      if (error.message) {
+        if (error.message.includes("user rejected")) {
+          errorMessage = "Transaction cancelled";
+          description = "You cancelled the transaction";
+        } else if (error.message.includes("network")) {
+          errorMessage = "Network error";
+          description = "Please check your connection and try again";
+        } else if (error.message.includes("insufficient funds")) {
+          errorMessage = "Insufficient funds";
+          description = "You don't have enough ETH for gas fees";
+        } else {
+          description = error.message;
+        }
+      }
+
+      toast.error(errorMessage, { description });
     } finally {
       setIsEncrypting(false);
     }
