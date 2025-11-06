@@ -37,5 +37,21 @@ task("dream-encryption:get-dream-meta", "Get dream metadata")
     console.log(`  Created at: ${new Date(Number(createdAt) * 1000).toISOString()}`);
   });
 
+task("dream-encryption:get-owner-dreams", "Get all dreams for an owner")
+  .addParam("address", "Contract address")
+  .addParam("owner", "Owner address")
+  .setAction(async function (taskArguments: TaskArguments, { ethers }) {
+    const contract = await ethers.getContractAt("DreamEncryption", taskArguments.address);
+
+    const dreamIds = await contract.getDreamIdsByOwner(taskArguments.owner);
+    const dreamCount = await contract.getDreamCountByOwner(taskArguments.owner);
+
+    console.log(`Owner ${taskArguments.owner} has ${dreamCount} dreams:`);
+    for (const id of dreamIds) {
+      const [owner, createdAt] = await contract.getDreamMeta(id);
+      console.log(`  Dream ${id}: Created at ${new Date(Number(createdAt) * 1000).toISOString()}`);
+    }
+  });
+
 
 
