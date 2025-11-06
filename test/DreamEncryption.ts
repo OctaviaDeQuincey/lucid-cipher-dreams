@@ -58,6 +58,34 @@ describe("DreamEncryption", function () {
     ).to.be.revertedWith("Empty dream data");
   });
 
+  it("should emit InterpretationCountIncremented event", async function () {
+    const dreamText = "I dreamed of flying through the clouds";
+    const encryptedData = ethers.toUtf8Bytes(dreamText);
+
+    // Submit dream
+    const encryptedCount = await fhevm
+      .createEncryptedInput(contractAddress, signers.alice.address)
+      .add32(0)
+      .encrypt();
+
+    await contract
+      .connect(signers.alice)
+      .submitDream(encryptedData, encryptedCount.handles[0], encryptedCount.inputProof);
+
+    // Increment interpretation count
+    const incrementInput = await fhevm
+      .createEncryptedInput(contractAddress, signers.bob.address)
+      .add32(1)
+      .encrypt();
+
+    const tx = await contract
+      .connect(signers.bob)
+      .incrementInterpretationCount(0, incrementInput.handles[0], incrementInput.inputProof);
+
+    // Check event emission
+    await expect(tx).to.emit(contract, "InterpretationCountIncremented").withArgs(0, signers.bob.address);
+  });
+
   it("should submit a dream successfully", async function () {
     const dreamText = "I dreamed of flying through the clouds";
     const encryptedData = ethers.toUtf8Bytes(dreamText); // In real use, this would be AES-GCM encrypted
