@@ -20,11 +20,13 @@ interface Dream {
 
 export const DreamGallery = () => {
   const [dreams, setDreams] = useState<Dream[]>([]);
+  const [filteredDreams, setFilteredDreams] = useState<Dream[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedDream, setSelectedDream] = useState<Dream | null>(null);
   const [decryptedText, setDecryptedText] = useState<string>("");
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [filter, setFilter] = useState<'all' | 'mine'>('all');
   const { address } = useAccount();
   const { contract, contractReadOnly, contractAddress, isReady } = useDreamContract();
   const { instance: fhevmInstance, status: fhevmStatus } = useFhevm();
@@ -90,6 +92,7 @@ export const DreamGallery = () => {
       });
 
       setDreams(dreamsList);
+      setFilteredDreams(dreamsList);
     } catch (error) {
       console.error("Error loading dreams:", error);
       toast.error("Failed to load dreams");
@@ -97,6 +100,15 @@ export const DreamGallery = () => {
       setLoading(false);
     }
   };
+
+  // Filter dreams based on selected filter
+  useEffect(() => {
+    if (filter === 'mine' && address) {
+      setFilteredDreams(dreams.filter(dream => dream.owner.toLowerCase() === address.toLowerCase()));
+    } else {
+      setFilteredDreams(dreams);
+    }
+  }, [dreams, filter, address]);
 
   useEffect(() => {
     if (contractReadOnly && contractAddress) {
@@ -220,26 +232,48 @@ export const DreamGallery = () => {
     <>
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto space-y-8">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4">
+            <div>
             <h2 className="font-space text-4xl font-bold bg-gradient-to-r from-dream-violet to-dream-cyan bg-clip-text text-transparent">
               Dream Gallery
             </h2>
             <p className="text-muted-foreground">
               Explore encrypted dreams waiting to be interpreted
             </p>
+            </div>
+
+            <div className="flex justify-center gap-2">
+              <Button
+                variant={filter === 'all' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setFilter('all')}
+                className="glass-panel"
+              >
+                All Dreams
+              </Button>
+              <Button
+                variant={filter === 'mine' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setFilter('mine')}
+                className="glass-panel"
+                disabled={!address}
+              >
+                My Dreams
+              </Button>
+            </div>
           </div>
 
           {loading && dreams.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Loading dreams...</p>
             </div>
-          ) : dreams.length === 0 ? (
+          ) : filteredDreams.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">No dreams yet. Be the first to submit one!</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {dreams.map((dream, index) => (
+              {filteredDreams.map((dream, index) => (
                 <div
                   key={dream.id}
                   className="glass-panel rounded-2xl p-6 space-y-4 hover:dream-glow transition-all duration-300 animate-float"
