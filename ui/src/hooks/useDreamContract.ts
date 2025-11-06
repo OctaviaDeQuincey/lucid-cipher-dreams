@@ -16,6 +16,7 @@ const DREAM_ENCRYPTION_ABI = [
   'function getInterpretationCount(uint256 id) external view returns (bytes32)',
   'function incrementInterpretationCount(uint256 id, bytes32 increment, bytes inputProof) external',
   'event DreamSubmitted(uint256 indexed id, address indexed owner, uint64 createdAt)',
+  'event InterpretationCountIncremented(uint256 indexed id, address indexed interpreter, uint64 timestamp)',
 ] as const;
 
 export function useDreamContract() {
