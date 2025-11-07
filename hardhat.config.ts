@@ -79,8 +79,12 @@ const config: HardhatUserConfig = {
       optimizer: {
         enabled: true,
         runs: 800,
+        details: {
+          yul: false,
+        },
       },
       evmVersion: "cancun",
+      viaIR: false,
     },
   },
   typechain: {
