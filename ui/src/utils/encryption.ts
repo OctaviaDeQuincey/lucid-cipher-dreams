@@ -137,5 +137,45 @@ export function bytesToHex(bytes: Uint8Array): string {
     .join('');
 }
 
+/**
+ * Validate encrypted text format
+ * @param encryptedText The encrypted text to validate
+ * @returns true if format is valid
+ */
+export function validateEncryptedText(encryptedText: string): boolean {
+  try {
+    const [ivHex, encryptedHex] = encryptedText.split(':');
+    if (!ivHex || !encryptedHex) return false;
+
+    // IV should be 24 characters (12 bytes * 2)
+    if (ivHex.length !== 24) return false;
+
+    // Encrypted data should be even length hex
+    if (encryptedHex.length % 2 !== 0) return false;
+
+    // Check if all characters are valid hex
+    const hexRegex = /^[0-9a-fA-F]+$/;
+    return hexRegex.test(ivHex) && hexRegex.test(encryptedHex);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Test encryption/decryption roundtrip
+ * @param testText Text to test
+ * @param seed Key derivation seed
+ * @returns true if roundtrip succeeds
+ */
+export async function testEncryptionRoundtrip(testText: string, seed: string): Promise<boolean> {
+  try {
+    const encrypted = await encryptText(testText, seed);
+    const decrypted = await decryptText(encrypted, seed);
+    return decrypted === testText;
+  } catch {
+    return false;
+  }
+}
+
 
 
