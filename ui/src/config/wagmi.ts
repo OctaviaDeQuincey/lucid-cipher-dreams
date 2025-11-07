@@ -31,5 +31,8 @@ export const config = getDefaultConfig({
   ssr: false,
 });
 
+// Re-export chains for easy access
+export { hardhat, sepolia };
+
 
 
