@@ -86,6 +86,43 @@ describe("DreamEncryption", function () {
     await expect(tx).to.emit(contract, "InterpretationCountIncremented").withArgs(0, signers.bob.address);
   });
 
+  it("should handle multiple dreams efficiently", async function () {
+    const dreamTexts = [
+      "Dream of flying whales",
+      "Underwater city vision",
+      "Time-traveling through memories",
+      "Dancing with shadow creatures"
+    ];
+
+    // Submit multiple dreams
+    for (let i = 0; i < dreamTexts.length; i++) {
+      const encryptedData = ethers.toUtf8Bytes(dreamTexts[i]);
+      const encryptedCount = await fhevm
+        .createEncryptedInput(contractAddress, signers.alice.address)
+        .add32(0)
+        .encrypt();
+
+      await contract
+        .connect(signers.alice)
+        .submitDream(encryptedData, encryptedCount.handles[0], encryptedCount.inputProof);
+    }
+
+    // Verify all dreams were stored
+    const totalCount = await contract.getDreamCount();
+    expect(totalCount).to.eq(dreamTexts.length);
+
+    // Verify owner's dream count
+    const ownerCount = await contract.getDreamCountByOwner(signers.alice.address);
+    expect(ownerCount).to.eq(dreamTexts.length);
+
+    // Verify dream IDs
+    const dreamIds = await contract.getDreamIdsByOwner(signers.alice.address);
+    expect(dreamIds.length).to.eq(dreamTexts.length);
+    for (let i = 0; i < dreamIds.length; i++) {
+      expect(dreamIds[i]).to.eq(i);
+    }
+  });
+
   it("should submit a dream successfully", async function () {
     const dreamText = "I dreamed of flying through the clouds";
     const encryptedData = ethers.toUtf8Bytes(dreamText); // In real use, this would be AES-GCM encrypted
